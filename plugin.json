@@ -1,5 +1,5 @@
 {
-    "id": "friendsofbotble/turnstile",
+    "id": "friendsofbotble/fob-turnstile",
     "name": "Turnstile",
     "namespace": "FriendsOfBotble\\Turnstile\\",
     "provider": "FriendsOfBotble\\Turnstile\\Providers\\TurnstileServiceProvider",
