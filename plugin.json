@@ -1,0 +1,10 @@
+{
+    "id": "friendsofbotble/turnstile",
+    "name": "Turnstile",
+    "namespace": "FriendsOfBotble\\Turnstile\\",
+    "provider": "FriendsOfBotble\\Turnstile\\Providers\\TurnstileServiceProvider",
+    "author": "Friends of Botble",
+    "url": "https://friendsofbotble.com",
+    "version": "0.1.0",
+    "description": "Turnstile is a CAPTCHA alternative that is privacy-focused"
+}
