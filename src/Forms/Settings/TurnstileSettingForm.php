@@ -3,10 +3,18 @@
 namespace FriendsOfBotble\Turnstile\Forms\Settings;
 
 use Botble\Base\Forms\FieldOptions\AlertFieldOption;
+use Botble\Base\Forms\FieldOptions\CheckboxFieldOption;
+use Botble\Base\Forms\FieldOptions\HtmlFieldOption;
+use Botble\Base\Forms\FieldOptions\OnOffFieldOption;
 use Botble\Base\Forms\FieldOptions\TextFieldOption;
 use Botble\Base\Forms\Fields\AlertField;
+use Botble\Base\Forms\Fields\HtmlField;
+use Botble\Base\Forms\Fields\OnOffCheckboxField;
+use Botble\Base\Forms\Fields\OnOffField;
 use Botble\Base\Forms\Fields\TextField;
+use Botble\Base\Forms\FormCollapse;
 use Botble\Setting\Forms\SettingForm;
+use Botble\SocialLogin\Forms\SocialLoginSettingForm;
 use FriendsOfBotble\Turnstile\Http\Requests\Settings\TurnstileSettingRequest;
 
 class TurnstileSettingForm extends SettingForm
@@ -48,6 +56,39 @@ class TurnstileSettingForm extends SettingForm
                     ->label(trans('plugins/fob-turnstile::turnstile.settings.secret_key'))
                     ->value(setting('fob_turnstile_secret_key'))
                     ->toArray()
+            )
+            ->addCollapsible(
+                FormCollapse::make('fob-turnstile-member-settings')
+                    ->targetField(
+                        'fob_turnstile_enable',
+                        OnOffField::class,
+                        OnOffFieldOption::make()
+                            ->label(trans('plugins/fob-turnstile::turnstile.settings.member'))
+                    )
+                    ->fieldset(function (TurnstileSettingForm $form) {
+                        $form
+                            ->add(
+                                'fob_turnstile_member_login',
+                                OnOffField::class,
+                                OnOffFieldOption::make()
+                                    ->label(trans('plugins/fob-turnstile::turnstile.settings.login'))
+                                    ->toArray(),
+                            )
+                            ->add(
+                                'fob_turnstile_member_registration',
+                                OnOffField::class,
+                                OnOffFieldOption::make()
+                                    ->label(trans('plugins/fob-turnstile::turnstile.settings.registration'))
+                                    ->toArray(),
+                            )
+                            ->add(
+                                'fob_turnstile_member_forgot_password',
+                                OnOffField::class,
+                                OnOffFieldOption::make()
+                                    ->label(trans('plugins/fob-turnstile::turnstile.settings.forgot_password'))
+                                    ->toArray(),
+                            );
+                    })
             );
     }
 }
