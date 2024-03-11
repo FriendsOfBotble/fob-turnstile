@@ -3,18 +3,13 @@
 namespace FriendsOfBotble\Turnstile\Forms\Settings;
 
 use Botble\Base\Forms\FieldOptions\AlertFieldOption;
-use Botble\Base\Forms\FieldOptions\CheckboxFieldOption;
-use Botble\Base\Forms\FieldOptions\HtmlFieldOption;
 use Botble\Base\Forms\FieldOptions\OnOffFieldOption;
 use Botble\Base\Forms\FieldOptions\TextFieldOption;
 use Botble\Base\Forms\Fields\AlertField;
-use Botble\Base\Forms\Fields\HtmlField;
-use Botble\Base\Forms\Fields\OnOffCheckboxField;
 use Botble\Base\Forms\Fields\OnOffField;
 use Botble\Base\Forms\Fields\TextField;
 use Botble\Base\Forms\FormCollapse;
 use Botble\Setting\Forms\SettingForm;
-use Botble\SocialLogin\Forms\SocialLoginSettingForm;
 use FriendsOfBotble\Turnstile\Http\Requests\Settings\TurnstileSettingRequest;
 
 class TurnstileSettingForm extends SettingForm
