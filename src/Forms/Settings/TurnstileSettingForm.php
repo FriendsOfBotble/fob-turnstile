@@ -11,15 +11,14 @@ use FriendsOfBotble\Turnstile\Http\Requests\Settings\TurnstileSettingRequest;
 
 class TurnstileSettingForm extends SettingForm
 {
-
     public function setup(): void
     {
         parent::setup();
 
         $this
             ->setUrl(route('turnstile.settings'))
-            ->setSectionTitle(trans('plugins/turnstile::turnstile.settings.title'))
-            ->setSectionDescription(trans('plugins/turnstile::turnstile.settings.description'))
+            ->setSectionTitle(trans('plugins/fob-turnstile::turnstile.settings.title'))
+            ->setSectionDescription(trans('plugins/fob-turnstile::turnstile.settings.description'))
             ->setValidatorClass(TurnstileSettingRequest::class)
             ->add(
                 'description',
@@ -29,7 +28,7 @@ class TurnstileSettingForm extends SettingForm
                         str_replace(
                             '<a>',
                             '<a href="https://dash.cloudflare.com/sign-up?to=/:account/turnstile" target="_blank">',
-                            trans('plugins/turnstile::turnstile.settings.help_text')
+                            trans('plugins/fob-turnstile::turnstile.settings.help_text')
                         )
                     )
                     ->toArray()
@@ -38,7 +37,7 @@ class TurnstileSettingForm extends SettingForm
                 'fob_turnstile_site_key',
                 TextField::class,
                 TextFieldOption::make()
-                    ->label(trans('plugins/turnstile::turnstile.settings.site_key'))
+                    ->label(trans('plugins/fob-turnstile::turnstile.settings.site_key'))
                     ->value(setting('fob_turnstile_site_key'))
                     ->toArray()
             )
@@ -46,7 +45,7 @@ class TurnstileSettingForm extends SettingForm
                 'fob_turnstile_secret_key',
                 TextField::class,
                 TextFieldOption::make()
-                    ->label(trans('plugins/turnstile::turnstile.settings.secret_key'))
+                    ->label(trans('plugins/fob-turnstile::turnstile.settings.secret_key'))
                     ->value(setting('fob_turnstile_secret_key'))
                     ->toArray()
             );
