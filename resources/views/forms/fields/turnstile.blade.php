@@ -1,2 +1,5 @@
-<input type="hidden" name="turnstile">
-<div class="mb-3 cf-turnstile"></div>
+@php
+    $id = 'cf-turnstile-' . hash('sha256', time() . rand())
+@endphp
+
+<div class="mb-3 cf-turnstile" id="{{ $id }}"></div>

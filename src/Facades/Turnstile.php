@@ -7,7 +7,10 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static array verify(string $response)
+ * @method static void register(string $form, string $request, string $position, string $addPosition = 'after')
  * @method static void registerAssets()
+ * @method static string getSettingKey(string $key)
+ * @method static mixed getSetting(string $key, mixed $default)
  *
  * @see \FriendsOfBotble\Turnstile\Turnstile
  */

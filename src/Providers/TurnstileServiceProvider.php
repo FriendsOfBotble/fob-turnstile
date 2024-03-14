@@ -2,17 +2,20 @@
 
 namespace FriendsOfBotble\Turnstile\Providers;
 
+use Botble\Base\Facades\AdminHelper;
 use Botble\Base\Facades\PanelSectionManager;
 use Botble\Base\PanelSections\PanelSectionItem;
 use Botble\Base\Supports\ServiceProvider;
 use Botble\Base\Traits\LoadAndPublishDataTrait;
+use Botble\Contact\Forms\Fronts\ContactForm;
+use Botble\Contact\Http\Requests\ContactRequest;
 use Botble\Member\Forms\Fronts\Auth\LoginForm;
 use Botble\Member\Http\Requests\Fronts\Auth\LoginRequest;
+use Botble\Newsletter\Forms\Fronts\NewsletterForm;
+use Botble\Newsletter\Http\Requests\NewsletterRequest;
 use Botble\Setting\PanelSections\SettingOthersPanelSection;
-use Botble\Support\Http\Requests\Request;
 use FriendsOfBotble\Turnstile\Contracts\Turnstile as TurnstileContract;
-use FriendsOfBotble\Turnstile\Forms\Fields\TurnstileField;
-use FriendsOfBotble\Turnstile\Rules\Turnstile as TurnstileRule;
+use FriendsOfBotble\Turnstile\Facades\Turnstile as TurnstileFacade;
 use FriendsOfBotble\Turnstile\Turnstile;
 use Illuminate\Routing\Events\RouteMatched;
 
@@ -36,8 +39,13 @@ class TurnstileServiceProvider extends ServiceProvider
             ->setNamespace('plugins/fob-turnstile')
             ->loadAndPublishTranslations()
             ->loadAndPublishViews()
-            ->loadRoutes();
+            ->loadRoutes()
+            ->registerPanelSection()
+            ->registerTurnstile();
+    }
 
+    protected function registerPanelSection(): self
+    {
         PanelSectionManager::default()->beforeRendering(function () {
             PanelSectionManager::registerItem(
                 SettingOthersPanelSection::class,
@@ -50,18 +58,47 @@ class TurnstileServiceProvider extends ServiceProvider
             );
         });
 
+        return $this;
+    }
+
+    protected function registerTurnstile(): self
+    {
         $this->app['events']->listen(RouteMatched::class, function () {
-            LoginForm::extend(function (LoginForm $form) {
-                $form->addAfter('password', 'turnstile', TurnstileField::class);
-            });
+            //            if (AdminHelper::isInAdmin(true)) {
+            //                return;
+            //            }
 
-            add_filter('core_request_rules', function (array $rules, Request $request) {
-                if ($request instanceof LoginRequest) {
-                    $rules['turnstile'] = [new TurnstileRule()];
-                }
+            if (is_plugin_active('member')) {
+                TurnstileFacade::register(
+                    LoginForm::class,
+                    LoginRequest::class,
+                    'password',
+                );
+            }
 
-                return $rules;
-            }, 1, 2);
+            if (is_plugin_active('contact')) {
+                TurnstileFacade::register(
+                    ContactForm::class,
+                    ContactRequest::class,
+                    'content',
+                );
+            }
+
+            if (is_plugin_active('newsletter')) {
+                TurnstileFacade::register(
+                    NewsletterForm::class,
+                    NewsletterRequest::class,
+                    'submit',
+                );
+            }
+
+            TurnstileFacade::register(
+                \Botble\ACL\Forms\Auth\LoginForm::class,
+                \Botble\ACL\Http\Requests\LoginRequest::class,
+                'password',
+            );
         });
+
+        return $this;
     }
 }

@@ -1,14 +1,23 @@
-<script>
-    turnstile.ready(function () {
-        turnstile.render('.cf-turnstile', {
-            sitekey: '{{ $siteKey }}',
-            callback: function (token) {
-                document
-                    .querySelector('.cf-turnstile')
-                    .closest('form')
-                    .querySelector('input[name="turnstile"]')
-                    .value = token;
-            },
+@once
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" rel="preload"></script>
+
+    <script>
+        turnstile.ready(function () {
+            document.querySelectorAll('.cf-turnstile').forEach(function (el) {
+                turnstile.render(`#${el.id}`, {
+                    sitekey: '{{ $siteKey }}',
+                });
+            });
         });
-    });
-</script>
+
+        window.addEventListener('load', function () {
+            $(document).ajaxComplete(function(response, status, xhr) {
+                if (! (typeof xhr.data === 'string' && xhr.data.includes('_js_validation'))) {
+                    document.querySelectorAll('.cf-turnstile').forEach(function (el) {
+                        turnstile.reset(`#${el.id}`);
+                    });
+                }
+            });
+        });
+    </script>
+@endonce
