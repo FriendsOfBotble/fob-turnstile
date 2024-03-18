@@ -13,9 +13,14 @@ use InvalidArgumentException;
 class Turnstile implements TurnstileContract
 {
     public function __construct(
-        protected string $siteKey,
-        protected string $secretKey,
+        protected ?string $siteKey,
+        protected ?string $secretKey,
     ) {
+    }
+
+    public function isEnabled(): bool
+    {
+        return ! empty($this->siteKey) && ! empty($this->secretKey);
     }
 
     public function verify(string $response): array

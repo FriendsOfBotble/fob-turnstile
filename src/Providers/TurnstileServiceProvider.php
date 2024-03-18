@@ -2,7 +2,6 @@
 
 namespace FriendsOfBotble\Turnstile\Providers;
 
-use Botble\Base\Facades\AdminHelper;
 use Botble\Base\Facades\PanelSectionManager;
 use Botble\Base\PanelSections\PanelSectionItem;
 use Botble\Base\Supports\ServiceProvider;
@@ -26,10 +25,10 @@ class TurnstileServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(TurnstileContract::class, function () {
-            return new Turnstile(
-                setting('fob_turnstile_site_key'),
-                setting('fob_turnstile_secret_key'),
-            );
+            $siteKey = setting('fob_turnstile_site_key');
+            $secretKey = setting('fob_turnstile_secret_key');
+
+            return new Turnstile($siteKey, $secretKey);
         });
     }
 
@@ -63,11 +62,11 @@ class TurnstileServiceProvider extends ServiceProvider
 
     protected function registerTurnstile(): self
     {
-        $this->app['events']->listen(RouteMatched::class, function () {
-            //            if (AdminHelper::isInAdmin(true)) {
-            //                return;
-            //            }
+        if (! TurnstileFacade::isEnabled()) {
+            return $this;
+        }
 
+        $this->app['events']->listen(RouteMatched::class, function () {
             if (is_plugin_active('member')) {
                 TurnstileFacade::register(
                     LoginForm::class,

@@ -4,6 +4,8 @@ namespace FriendsOfBotble\Turnstile\Contracts;
 
 interface Turnstile
 {
+    public function isEnabled(): bool;
+
     public function verify(string $response): array;
 
     public function register(string $form, string $request, string $position, string $addPosition = 'after'): void;
