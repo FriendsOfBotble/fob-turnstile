@@ -2,21 +2,27 @@
 
 namespace FriendsOfBotble\Turnstile\Providers;
 
+use Botble\ACL\Forms\Auth\ForgotPasswordForm;
+use Botble\ACL\Forms\Auth\LoginForm;
+use Botble\ACL\Forms\Auth\ResetPasswordForm;
+use Botble\ACL\Http\Requests\ForgotPasswordRequest;
+use Botble\ACL\Http\Requests\LoginRequest;
+use Botble\ACL\Http\Requests\ResetPasswordRequest;
 use Botble\Base\Facades\PanelSectionManager;
+use Botble\Base\Forms\FormAbstract;
 use Botble\Base\PanelSections\PanelSectionItem;
 use Botble\Base\Supports\ServiceProvider;
 use Botble\Base\Traits\LoadAndPublishDataTrait;
-use Botble\Contact\Forms\Fronts\ContactForm;
-use Botble\Contact\Http\Requests\ContactRequest;
-use Botble\Member\Forms\Fronts\Auth\LoginForm;
-use Botble\Member\Http\Requests\Fronts\Auth\LoginRequest;
-use Botble\Newsletter\Forms\Fronts\NewsletterForm;
-use Botble\Newsletter\Http\Requests\NewsletterRequest;
 use Botble\Setting\PanelSections\SettingOthersPanelSection;
+use Botble\Support\Http\Requests\Request;
+use Botble\Theme\FormFront;
 use FriendsOfBotble\Turnstile\Contracts\Turnstile as TurnstileContract;
 use FriendsOfBotble\Turnstile\Facades\Turnstile as TurnstileFacade;
+use FriendsOfBotble\Turnstile\Forms\Fields\TurnstileField;
+use FriendsOfBotble\Turnstile\Rules\Turnstile as TurnstileRule;
 use FriendsOfBotble\Turnstile\Turnstile;
-use Illuminate\Routing\Events\RouteMatched;
+use Illuminate\Routing\Events\Routing;
+use Illuminate\Support\Facades\Event;
 
 class TurnstileServiceProvider extends ServiceProvider
 {
@@ -40,6 +46,7 @@ class TurnstileServiceProvider extends ServiceProvider
             ->loadAndPublishViews()
             ->loadRoutes()
             ->registerPanelSection()
+            ->loadAndPublishConfigurations('permissions')
             ->registerTurnstile();
     }
 
@@ -62,40 +69,70 @@ class TurnstileServiceProvider extends ServiceProvider
 
     protected function registerTurnstile(): self
     {
+        TurnstileFacade::registerForm(
+            LoginForm::class,
+            LoginRequest::class,
+            trans('plugins/fob-turnstile::turnstile.forms.admin_login')
+        );
+
+        TurnstileFacade::registerForm(
+            ForgotPasswordForm::class,
+            ForgotPasswordRequest::class,
+            trans('plugins/fob-turnstile::turnstile.forms.admin_forgot_password')
+        );
+
+        TurnstileFacade::registerForm(
+            ResetPasswordForm::class,
+            ResetPasswordRequest::class,
+            trans('plugins/fob-turnstile::turnstile.forms.admin_reset_password')
+        );
+
         if (! TurnstileFacade::isEnabled()) {
             return $this;
         }
 
-        $this->app['events']->listen(RouteMatched::class, function () {
-            if (is_plugin_active('member')) {
-                TurnstileFacade::register(
-                    LoginForm::class,
-                    LoginRequest::class,
-                    'password',
-                );
+        FormAbstract::beforeRendering(function (FormAbstract $form): void {
+            $fieldKey = 'submit';
+
+            if ($form instanceof FormFront) {
+                $fieldKey = $form->has($fieldKey) ? $fieldKey : array_key_last($form->getFields());
             }
 
-            if (is_plugin_active('contact')) {
-                TurnstileFacade::register(
-                    ContactForm::class,
-                    ContactRequest::class,
-                    'content',
-                );
+            if (! TurnstileFacade::isEnabledForForm($form::class)) {
+                return;
             }
 
-            if (is_plugin_active('newsletter')) {
-                TurnstileFacade::register(
-                    NewsletterForm::class,
-                    NewsletterRequest::class,
-                    'submit',
-                );
-            }
-
-            TurnstileFacade::register(
-                \Botble\ACL\Forms\Auth\LoginForm::class,
-                \Botble\ACL\Http\Requests\LoginRequest::class,
-                'password',
+            $form->addBefore(
+                $fieldKey,
+                'turnstile',
+                TurnstileField::class
             );
+        });
+
+        Event::listen(Routing::class, function () {
+            add_filter('core_request_rules', function (array $rules, Request $request) {
+                TurnstileFacade::getForms();
+
+                if (TurnstileFacade::isEnabledForForm(
+                    TurnstileFacade::getFormByRequest($request::class)
+                )) {
+                    $rules['cf-turnstile-response'] = [new TurnstileRule()];
+                }
+
+                return $rules;
+            }, 999, 2);
+
+            add_filter('core_request_attributes', function (array $attributes, Request $request) {
+                TurnstileFacade::getForms();
+
+                if (TurnstileFacade::isEnabledForForm(
+                    TurnstileFacade::getFormByRequest($request::class)
+                )) {
+                    $attributes['cf-turnstile-response'] = 'Turnstile';
+                }
+
+                return $attributes;
+            }, 999, 2);
         });
 
         return $this;

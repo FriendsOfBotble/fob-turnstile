@@ -10,14 +10,16 @@ class Turnstile implements ValidationRule
 {
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $secretKey = setting('fob_turnstile_secret_key');
+        if (empty($value)) {
+            $fail(__('validation.required'));
 
-        if (! is_string($value) || ! is_string($secretKey)) {
-            $fail('The :attribute is invalid.');
+            return;
         }
 
         if (TurnstileFacade::verify($value)['success'] !== true) {
-            $fail("We couldn't verify if you're a robot or not. Please refresh the page and try again.");
+            $fail(trans('plugins/fob-turnstile::turnstile.validation.turnstile'));
+
+            return;
         }
     }
 }

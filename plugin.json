@@ -1,10 +1,10 @@
 {
     "id": "friendsofbotble/fob-turnstile",
-    "name": "Turnstile",
+    "name": "FOB Turnstile",
     "namespace": "FriendsOfBotble\\Turnstile\\",
     "provider": "FriendsOfBotble\\Turnstile\\Providers\\TurnstileServiceProvider",
     "author": "Friends of Botble",
     "url": "https://friendsofbotble.com",
     "version": "0.1.0",
-    "description": "Turnstile is a CAPTCHA alternative that is privacy-focused"
+    "description": "Turnstile is a CAPTCHA alternative that is privacy-focused."
 }
