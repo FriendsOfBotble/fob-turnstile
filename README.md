@@ -19,7 +19,7 @@ Go to the **Admin Panel** and click on the **Plugins** tab. Click on the **Add n
 ### Install manually
 
 1. Download the plugin from
-   the [Botble Marketplace](https://marketplace.botble.com/products/friendsofbotble/turnstile).
+   the [Botble Marketplace](https://marketplace.botble.com/products/friendsofbotble/fob-turnstile).
 2. Extract the downloaded file and upload the extracted folder to the `platform/plugins` directory.
 3. Go to **Admin** > **Plugins** and click on the **Activate** button.
 
