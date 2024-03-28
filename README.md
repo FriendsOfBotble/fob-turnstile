@@ -25,11 +25,13 @@ Go to the **Admin Panel** and click on the **Plugins** tab. Click on the **Add n
 
 ## Usage
 
+![Demo](./art/demo.gif)
+
 In admin panel, go to `Settings` -> `Others` -> `FOB Turnstile` to configure the plugin.
 
 To use Turnstile, you'll need to [generate a Turnstile token from Cloudflare](https://dash.cloudflare.com/sign-up?to=/:account/turnstile). After that, and paste the `Site Key` and `Secret Key` into the plugin settings.
 
-![Settings](https://github.com/FriendsOfBotble/fob-turnstile/assets/56961917/8e1e447e-233f-4a0b-ada0-793e01d39244)
+![Settings](./art/settings.png)
 
 In the settings page, you can also configure which forms to enable Turnstile on.
 
