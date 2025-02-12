@@ -1,5 +1,5 @@
 @once
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" rel="preload"></script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" rel="preload" data-pagespeed-no-defer></script>
 
     <script>
         turnstile.ready(function () {
