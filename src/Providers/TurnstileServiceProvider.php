@@ -92,14 +92,14 @@ class TurnstileServiceProvider extends ServiceProvider
         }
 
         FormAbstract::beforeRendering(function (FormAbstract $form): void {
+            if (! TurnstileFacade::isEnabledForForm($form::class)) {
+                return;
+            }
+
             $fieldKey = 'submit';
 
             if ($form instanceof FormFront) {
                 $fieldKey = $form->has($fieldKey) ? $fieldKey : array_key_last($form->getFields());
-            }
-
-            if (! TurnstileFacade::isEnabledForForm($form::class)) {
-                return;
             }
 
             $form->addBefore(
