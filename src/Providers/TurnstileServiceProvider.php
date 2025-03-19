@@ -99,7 +99,11 @@ class TurnstileServiceProvider extends ServiceProvider
             $fieldKey = 'submit';
 
             if ($form instanceof FormFront) {
-                $fieldKey = $form->has($fieldKey) ? $fieldKey : array_key_last($form->getFields());
+                if (method_exists($form, 'getFormEndKey') && $form->getFormEndKey()) {
+                    $fieldKey = $form->getFormEndKey();
+                } else {
+                    $fieldKey = $form->has($fieldKey) ? $fieldKey : array_key_last($form->getFields());
+                }
             }
 
             $form->addBefore(

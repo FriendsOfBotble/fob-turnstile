@@ -83,7 +83,7 @@ class TurnstileSettingForm extends SettingForm
                                     ->toArray()
                             );
                         }
-                    })
+                    }, Turnstile::getSettingKey('enabled'), Turnstile::isEnabled(), Turnstile::isEnabled() == 1)
             );
     }
 }
