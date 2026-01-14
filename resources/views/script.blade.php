@@ -4,6 +4,10 @@
     <script>
         turnstile.ready(function () {
             document.querySelectorAll('.cf-turnstile').forEach(function (el) {
+                if (el.dataset.turnstileRendered) {
+                    return;
+                }
+                el.dataset.turnstileRendered = 'true';
                 turnstile.render(`#${el.id}`, {
                     sitekey: '{{ $siteKey }}',
                 });
